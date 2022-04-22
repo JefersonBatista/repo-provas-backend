@@ -11,6 +11,4 @@ async function create(req: Request, res: Response) {
   res.sendStatus(201);
 }
 
-export default {
-  create,
-};
+export default { create };

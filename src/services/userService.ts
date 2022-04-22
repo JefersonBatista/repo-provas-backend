@@ -21,6 +21,4 @@ async function checkEmailIsAvailable(email: string) {
   }
 }
 
-export default {
-  create,
-};
+export default { create };
