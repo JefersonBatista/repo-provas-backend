@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 
-function get(req: Request, res: Response) {
-  res.send(res.locals);
+import testService from "../services/testService.js";
+
+async function getByDiscipline(req: Request, res: Response) {
+  const tests = await testService.getByDiscipline();
+  res.send(tests);
 }
 
-export default { get };
+export default { getByDiscipline };
