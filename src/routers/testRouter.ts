@@ -6,9 +6,15 @@ import validateToken from "../middlewares/tokenValidationMiddleware.js";
 const testRouter = Router();
 
 testRouter.get(
-  "/tests-by-discipline",
+  "/tests-by-disciplines",
   validateToken,
-  testController.getByDiscipline
+  testController.getByDisciplines
+);
+
+testRouter.get(
+  "/tests-by-teachers",
+  validateToken,
+  testController.getByTeachers
 );
 
 export default testRouter;

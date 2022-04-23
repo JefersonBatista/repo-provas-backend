@@ -1,6 +1,6 @@
 import prisma from "../database.js";
 
-async function getByDiscipline() {
+async function getByDisciplines() {
   const tests = await prisma.term.findMany({
     include: {
       disciplines: {
@@ -9,7 +9,6 @@ async function getByDiscipline() {
           name: true,
           teachersDisciplines: {
             select: {
-              id: true,
               teacher: true,
               tests: {
                 select: {
@@ -28,6 +27,30 @@ async function getByDiscipline() {
   return { terms: tests };
 }
 
-export default {
-  getByDiscipline,
-};
+async function getByTeachers() {
+  const tests = await prisma.teacher.findMany({
+    include: {
+      teachersDisciplines: {
+        select: {
+          discipline: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          tests: {
+            select: {
+              id: true,
+              name: true,
+              category: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return { teachers: tests };
+}
+
+export default { getByDisciplines, getByTeachers };

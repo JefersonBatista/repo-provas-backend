@@ -2,9 +2,14 @@ import { Request, Response } from "express";
 
 import testService from "../services/testService.js";
 
-async function getByDiscipline(req: Request, res: Response) {
-  const tests = await testService.getByDiscipline();
+async function getByDisciplines(req: Request, res: Response) {
+  const tests = await testService.getByDisciplines();
   res.send(tests);
 }
 
-export default { getByDiscipline };
+async function getByTeachers(req: Request, res: Response) {
+  const tests = await testService.getByTeachers();
+  res.send(tests);
+}
+
+export default { getByDisciplines, getByTeachers };

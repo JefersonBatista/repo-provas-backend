@@ -1,10 +1,13 @@
 import testRepository from "../repositories/testRepository.js";
 
-async function getByDiscipline() {
-  const tests = await testRepository.getByDiscipline();
+async function getByDisciplines() {
+  const tests = await testRepository.getByDisciplines();
   return tests;
 }
 
-export default {
-  getByDiscipline,
-};
+async function getByTeachers() {
+  const tests = await testRepository.getByTeachers();
+  return tests;
+}
+
+export default { getByDisciplines, getByTeachers };
