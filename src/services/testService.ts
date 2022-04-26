@@ -1,4 +1,5 @@
 import testRepository from "../repositories/testRepository.js";
+import { testNotFoundError } from "../utils/errorUtils.js";
 
 async function getByDisciplines() {
   const tests = await testRepository.getByDisciplines();
@@ -10,4 +11,18 @@ async function getByTeachers() {
   return tests;
 }
 
-export default { getByDisciplines, getByTeachers };
+async function getByIdOrFail(id: number) {
+  const test = await testRepository.getById(id);
+  if (!test) {
+    throw testNotFoundError();
+  }
+
+  return test;
+}
+
+async function incrementViewCountById(id: number) {
+  await getByIdOrFail(id);
+  await testRepository.incrementViewCountById(id);
+}
+
+export default { getByDisciplines, getByTeachers, incrementViewCountById };

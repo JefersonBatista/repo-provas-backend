@@ -57,4 +57,28 @@ async function getByTeachers() {
   return { teachers: tests };
 }
 
-export default { getByDisciplines, getByTeachers };
+async function getById(id: number) {
+  const test = await prisma.test.findUnique({
+    where: { id },
+  });
+
+  return test;
+}
+
+async function incrementViewCountById(id: number) {
+  await prisma.test.update({
+    where: { id },
+    data: {
+      viewCount: {
+        increment: 1,
+      },
+    },
+  });
+}
+
+export default {
+  getByDisciplines,
+  getByTeachers,
+  getById,
+  incrementViewCountById,
+};

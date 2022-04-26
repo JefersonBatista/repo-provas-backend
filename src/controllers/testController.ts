@@ -12,4 +12,15 @@ async function getByTeachers(req: Request, res: Response) {
   res.send(tests);
 }
 
-export default { getByDisciplines, getByTeachers };
+async function incrementViewCount(req: Request, res: Response) {
+  const id: number = +req.params.id;
+
+  if (!id) {
+    return res.status(400).send("O ID especificado é inválido");
+  }
+
+  await testService.incrementViewCountById(id);
+  res.sendStatus(200);
+}
+
+export default { getByDisciplines, getByTeachers, incrementViewCount };

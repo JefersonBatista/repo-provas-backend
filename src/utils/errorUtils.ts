@@ -37,3 +37,10 @@ export function invalidAuthTokenError(): AppError {
     message: "Token de autenticação inválido",
   };
 }
+
+export function testNotFoundError(): AppError {
+  return {
+    type: "not_found",
+    message: "Não há prova com o ID especificado",
+  };
+}
