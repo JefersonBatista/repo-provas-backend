@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 
+import { CreateTestData } from "../repositories/testRepository.js";
 import testService from "../services/testService.js";
 
 async function getByDisciplines(req: Request, res: Response) {
@@ -23,4 +24,10 @@ async function incrementViewCount(req: Request, res: Response) {
   res.sendStatus(200);
 }
 
-export default { getByDisciplines, getByTeachers, incrementViewCount };
+async function create(req: Request, res: Response) {
+  const data = req.body as CreateTestData;
+  await testService.create(data);
+  res.sendStatus(201);
+}
+
+export default { getByDisciplines, getByTeachers, incrementViewCount, create };

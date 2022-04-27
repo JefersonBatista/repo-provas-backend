@@ -44,3 +44,31 @@ export function testNotFoundError(): AppError {
     message: "Não há prova com o ID especificado",
   };
 }
+
+export function categoryNotFoundError(): AppError {
+  return {
+    type: "not_found",
+    message: "Não há categoria com o ID especificado",
+  };
+}
+
+export function disciplineNotFoundError(): AppError {
+  return {
+    type: "not_found",
+    message: "Não há disciplina com o ID especificado",
+  };
+}
+
+export function teacherNotFoundError(): AppError {
+  return {
+    type: "not_found",
+    message: "Não há pessoa instrutora com o ID especificado",
+  };
+}
+
+export function doesNotTeachDisciplineError(): AppError {
+  return {
+    type: "not_found",
+    message: "A pessoa instrutora não leciona a disciplina",
+  };
+}
