@@ -1,6 +1,6 @@
 import { Router } from "express";
-import disciplineController from "../controllers/disciplineController";
-import validateToken from "../middlewares/tokenValidationMiddleware";
+import disciplineController from "../controllers/disciplineController.js";
+import validateToken from "../middlewares/tokenValidationMiddleware.js";
 
 const disciplineRouter = Router();
 disciplineRouter.use(validateToken);
