@@ -10,4 +10,9 @@ async function getByIdOrFail(id: number) {
   return category;
 }
 
-export default { getByIdOrFail };
+async function getAll() {
+  const categories = await categoryRepository.getAll();
+  return categories;
+}
+
+export default { getByIdOrFail, getAll };

@@ -26,9 +26,10 @@ describe("POST /users", () => {
 
   it("given a valid user, status should be 201 and user is created", async () => {
     const user = userFactory();
+    const email = user.email;
 
     const response = await supertest(app).post("/users").send(user);
-    const users = await prisma.user.findMany({});
+    const users = await prisma.user.findMany({ where: { email } });
 
     expect(response.status).toBe(201);
     expect(users.length).toBe(1);
@@ -43,7 +44,7 @@ describe("POST /users", () => {
     const response = await supertest(app)
       .post("/users")
       .send({ email, password });
-    const users = await prisma.user.findMany({});
+    const users = await prisma.user.findMany({ where: { email } });
 
     expect(response.status).toBe(409);
     expect(users.length).toBe(1);

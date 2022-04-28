@@ -10,4 +10,9 @@ async function getByIdOrFail(id: number) {
   return discipline;
 }
 
-export default { getByIdOrFail };
+async function getAll() {
+  const disciplines = await disciplineRepository.getAll();
+  return disciplines;
+}
+
+export default { getByIdOrFail, getAll };

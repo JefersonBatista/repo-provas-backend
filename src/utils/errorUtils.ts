@@ -68,7 +68,7 @@ export function teacherNotFoundError(): AppError {
 
 export function doesNotTeachDisciplineError(): AppError {
   return {
-    type: "not_found",
+    type: "unprocessable_entity",
     message: "A pessoa instrutora não leciona a disciplina",
   };
 }

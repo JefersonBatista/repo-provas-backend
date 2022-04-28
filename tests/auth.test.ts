@@ -26,6 +26,13 @@ describe("POST /auth/login", () => {
     expect(response.body).toStrictEqual({});
   });
 
+  it.todo(
+    "given a non-existent email, status should be 404 and token isn't returned"
+  );
+  it.todo(
+    "given an incorrect password, status should be 401 and token isn't returned"
+  );
+
   it("given a valid login, status should be 200 and token is returned", async () => {
     const user = userFactory();
     const login = user;
@@ -34,6 +41,6 @@ describe("POST /auth/login", () => {
     const response = await supertest(app).post("/auth/login").send(login);
 
     expect(response.status).toBe(200);
-    expect(response.body.token).toBeDefined();
+    expect(typeof response.body.token).toBe("string");
   });
 });

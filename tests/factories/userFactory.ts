@@ -12,7 +12,7 @@ export function invalidUserFactory() {
 export function userFactory() {
   const user = {
     email: faker.internet.email(),
-    password: faker.datatype.string(),
+    password: faker.internet.password(),
   };
 
   return user;
