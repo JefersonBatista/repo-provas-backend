@@ -7,8 +7,11 @@
   "scripts": {
     "dev": "npx nodemon src/server.ts",
     "build": "tsc",
-    "start": "node dist/src/server.js",
+    "start": "node dist/server.js",
     "test": "NODE_OPTIONS=--experimental-vm-modules npx dotenv-cli -e .env.test jest -i"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "repository": {
     "type": "git",
