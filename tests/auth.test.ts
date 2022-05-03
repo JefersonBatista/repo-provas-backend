@@ -6,10 +6,6 @@ import prisma from "../src/database";
 import { invalidUserFactory, userFactory } from "./factories/userFactory";
 
 describe("POST /auth/login", () => {
-  beforeEach(async () => {
-    await prisma.$executeRaw`TRUNCATE TABLE users;`;
-  });
-
   afterAll(async () => {
     await prisma.$disconnect();
   });

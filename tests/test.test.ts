@@ -4,12 +4,13 @@ import { faker } from "@faker-js/faker";
 import app from "../src/app";
 import prisma from "../src/database";
 import { userFactory } from "./factories/userFactory";
+import {
+  testFactory,
+  testWithInvalidTeacherDiscipline,
+  testWithInvalidUrl,
+} from "./factories/testFactory";
 
 describe("GET /tests-by-disciplines", () => {
-  beforeEach(async () => {
-    await prisma.$executeRaw`TRUNCATE TABLE users;`;
-  });
-
   afterAll(async () => {
     await prisma.$disconnect();
   });
@@ -44,15 +45,11 @@ describe("GET /tests-by-disciplines", () => {
 });
 
 describe("GET /tests-by-teachers", () => {
-  beforeEach(async () => {
-    await prisma.$executeRaw`TRUNCATE TABLE users;`;
-  });
-
   afterAll(async () => {
     await prisma.$disconnect();
   });
 
-  it("for a user logged in, it should return status 200 and an object with the prop terms", async () => {
+  it("for a user logged in, it should return status 200 and an object with the prop teachers", async () => {
     const user = userFactory();
 
     await supertest(app).post("/users").send(user);
@@ -78,5 +75,69 @@ describe("GET /tests-by-teachers", () => {
     const { body, status } = response;
     expect(status).toBe(401);
     expect(body).toStrictEqual({});
+  });
+});
+
+describe("POST /tests", () => {
+  beforeEach(async () => {
+    await prisma.$executeRaw`TRUNCATE TABLE tests;`;
+  });
+
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
+  it("given an invalid pdfUrl, return status 400 and do not add test", async () => {
+    const user = userFactory();
+    await supertest(app).post("/users").send(user);
+    const { body } = await supertest(app).post("/auth/login").send(user);
+    const { token } = body;
+
+    const invalidTest = testWithInvalidUrl();
+    const { status } = await supertest(app)
+      .post("/tests")
+      .set("Authorization", `Bearer ${token}`)
+      .send(invalidTest);
+
+    const tests = await prisma.test.findMany({});
+
+    expect(status).toBe(400);
+    expect(tests.length).toBe(0);
+  });
+
+  it("given invalid teacher and discipline, return status 422 and do not add test", async () => {
+    const user = userFactory();
+    await supertest(app).post("/users").send(user);
+    const { body } = await supertest(app).post("/auth/login").send(user);
+    const { token } = body;
+
+    const invalidTest = testWithInvalidTeacherDiscipline();
+    const { status } = await supertest(app)
+      .post("/tests")
+      .set("Authorization", `Bearer ${token}`)
+      .send(invalidTest);
+
+    const tests = await prisma.test.findMany({});
+
+    expect(status).toBe(422);
+    expect(tests.length).toBe(0);
+  });
+
+  it("given a valid test, return status 201 and add test in db", async () => {
+    const user = userFactory();
+    await supertest(app).post("/users").send(user);
+    const { body } = await supertest(app).post("/auth/login").send(user);
+    const { token } = body;
+
+    const test = testFactory();
+    const { status } = await supertest(app)
+      .post("/tests")
+      .set("Authorization", `Bearer ${token}`)
+      .send(test);
+
+    const tests = await prisma.test.findMany({});
+
+    expect(status).toBe(201);
+    expect(tests.length).toBe(1);
   });
 });

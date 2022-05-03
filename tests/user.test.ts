@@ -6,11 +6,8 @@ import prisma from "../src/database";
 import { invalidUserFactory, userFactory } from "./factories/userFactory";
 
 describe("POST /users", () => {
-  beforeEach(async () => {
-    await prisma.$executeRaw`TRUNCATE TABLE users;`;
-  });
-
   afterAll(async () => {
+    await prisma.$executeRaw`TRUNCATE TABLE users;`;
     await prisma.$disconnect();
   });
 
@@ -18,7 +15,9 @@ describe("POST /users", () => {
     const invalidUser = invalidUserFactory();
 
     const response = await supertest(app).post("/users").send(invalidUser);
-    const users = await prisma.user.findMany({});
+    const users = await prisma.user.findMany({
+      where: { email: invalidUser.email },
+    });
 
     expect(response.status).toBe(400);
     expect(users.length).toBe(0);
