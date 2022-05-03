@@ -9,6 +9,7 @@ import {
   testWithInvalidTeacherDiscipline,
   testWithInvalidUrl,
 } from "./factories/testFactory";
+import testService from "../src/services/testService";
 
 describe("GET /tests-by-disciplines", () => {
   afterAll(async () => {
@@ -87,6 +88,19 @@ describe("POST /tests", () => {
     await prisma.$disconnect();
   });
 
+  it("for a not logged user, return status 401 and do not add test", async () => {
+    const test = testFactory();
+    const { status } = await supertest(app)
+      .post("/tests")
+      .set("Authorization", `Bearer ${faker.datatype.string(30)}`)
+      .send(test);
+
+    const tests = await prisma.test.findMany({});
+
+    expect(status).toBe(401);
+    expect(tests.length).toBe(0);
+  });
+
   it("given an invalid pdfUrl, return status 400 and do not add test", async () => {
     const user = userFactory();
     await supertest(app).post("/users").send(user);
@@ -139,5 +153,66 @@ describe("POST /tests", () => {
 
     expect(status).toBe(201);
     expect(tests.length).toBe(1);
+  });
+});
+
+describe("PATCH /tests/:id/increment-view-count", () => {
+  beforeEach(async () => {
+    await prisma.$executeRaw`TRUNCATE TABLE tests;`;
+  });
+
+  it("for a not logged user, return status 401 and do not increment view count", async () => {
+    const test = testFactory();
+    await testService.create(test);
+    const id = (await prisma.test.findFirst({})).id;
+
+    const { status } = await supertest(app)
+      .patch(`/tests/${id}/increment-view-count`)
+      .set("Authorization", `Bearer ${faker.datatype.string(30)}`);
+
+    const dbTest = await prisma.test.findFirst({});
+
+    expect(status).toBe(401);
+    expect(dbTest.viewCount).toBe(0);
+  });
+
+  it("given a non-existent test, return status 404 and do not increment view count", async () => {
+    const test = testFactory();
+    await testService.create(test);
+    const id = (await prisma.test.findFirst({})).id;
+
+    const user = userFactory();
+    await supertest(app).post("/users").send(user);
+    const { body } = await supertest(app).post("/auth/login").send(user);
+    const { token } = body;
+
+    const { status } = await supertest(app)
+      .patch(`/tests/${id + 1}/increment-view-count`)
+      .set("Authorization", `Bearer ${token}`);
+
+    const dbTest = await prisma.test.findFirst({});
+
+    expect(status).toBe(404);
+    expect(dbTest.viewCount).toBe(0);
+  });
+
+  it("given an existent test, return status 200 and increment view count", async () => {
+    const test = testFactory();
+    await testService.create(test);
+    const id = (await prisma.test.findFirst({})).id;
+
+    const user = userFactory();
+    await supertest(app).post("/users").send(user);
+    const { body } = await supertest(app).post("/auth/login").send(user);
+    const { token } = body;
+
+    const { status } = await supertest(app)
+      .patch(`/tests/${id}/increment-view-count`)
+      .set("Authorization", `Bearer ${token}`);
+
+    const dbTest = await prisma.test.findFirst({});
+
+    expect(status).toBe(200);
+    expect(dbTest.viewCount).toBe(1);
   });
 });
